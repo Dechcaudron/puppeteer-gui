@@ -63,6 +63,8 @@ void main(string[] args)
 
     mainWindow.show();
     Main.run();
+
+	controller.disconnect();
 }
 
 void initUI()
@@ -198,6 +200,7 @@ void configureUI()
         }
     );
 
+	configureWindows();
     configurePuppeteerConfigWindow();
     //TODO: these default values will have to do by now
     configurePWMOutputListBox(10);
@@ -208,6 +211,30 @@ void configureUI()
     checkPuppeteerConnection();
 
     debug writeln("Done configuring UI");
+}
+
+void configureWindows()
+{
+	import gdk.Event;
+	import gtk.Widget;
+
+	mainWindow.addOnDelete(
+	(Event e, Widget w)
+		{
+			Main.quit();
+			return false;
+		}
+	);
+
+	auto hideWindowDelegate = delegate bool(Event e, Widget w)
+	{
+		w.hide();
+		return true;
+	};
+
+	puppeteerConfigWindow.addOnDelete(hideWindowDelegate);
+	loadPuppeteerConfigDialog.addOnDelete(hideWindowDelegate);
+	savePuppeteerConfigDialog.addOnDelete(hideWindowDelegate);
 }
 
 void configurePWMOutputListBox(int entries)

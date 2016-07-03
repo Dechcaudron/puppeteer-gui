@@ -36,7 +36,11 @@ public class PuppeteerController
 
     void disconnect()
     {
-        puppeteer.endCommunication();
+        if(isPuppeteerConnected)
+        {
+            puppeteer.endCommunication();
+            listener.finish();
+        }
     }
 
     void setPWM(ubyte pin, ubyte value)
