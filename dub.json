@@ -6,13 +6,12 @@
     "license": "GPL-3.0",
 
     "dependencies" : {
-    		"puppeteer" : "~>0.6.0",
-            "gtk-d": "~>3.3.1",
+    		"puppeteer" : "~>0.7.0",
             "ggplotd": "~>0.9.4"
     	},
 
     "subConfigurations": {
-    	
+        "ggplotd": "ggplotd-gtk"
     },
 
     "targetPath" : "out"

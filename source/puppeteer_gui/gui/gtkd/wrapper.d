@@ -11,6 +11,11 @@ public class GTKGuiWrapper : IGUI
         Main.init(args);
     }
 
+    public IBuilder buildFromFile(string filename)
+    {
+        return new GTKBuilder(filename);
+    }
+
     public IWindow createMainWindow(string title)
     {
         return new GTKMainWindow(title);
@@ -24,6 +29,18 @@ public class GTKGuiWrapper : IGUI
     public void run()
     {
         Main.run();
+    }
+}
+
+private class GTKBuilder : IBuilder
+{
+    import gtk.Builder;
+
+    Builder builder;
+
+    this(string filename)
+    {
+        builder = new Builder(filename);
     }
 }
 
