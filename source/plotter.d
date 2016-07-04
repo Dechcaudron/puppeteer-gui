@@ -7,25 +7,26 @@ import ggplotd.geom;
 import std.stdio;
 
 
-class Plotter
+struct Plotter
 {
-    private GGPlotD receivedPlot;
-    private GGPlotD adaptedPlot;
+    private GGPlotD receivedAIPlot;
+    private GGPlotD adaptedAIPlot;
+
+    private GGPlotD receivedVarMonitorsPlot;
+    private GGPlotD adaptedVarMonitorsPlot;
 
     enum plotWidth = 1000;
     enum plotHeight = 800;
-
-    this()
-    {
-
-    }
 
     void savePlots()
     {
         writeln("Saving plots...");
 
-        receivedPlot.save("received.png", plotWidth, plotHeight);
-        adaptedPlot.save("adapted.png", plotWidth, plotHeight);
+        receivedAIPlot.save("receivedAI.png", plotWidth, plotHeight);
+        adaptedAIPlot.save("adaptedAI.png", plotWidth, plotHeight);
+
+        receivedVarMonitorsPlot.save("receivedVarMonitors.png", plotWidth, plotHeight);
+        adaptedVarMonitorsPlot.save("adaptedVarMonitors.png", plotWidth, plotHeight);
 
         writeln("Plots have been saved");
     }
@@ -40,12 +41,21 @@ class Plotter
         auto adaptedAes = Aes!(long[], "x", float[], "y", string, "colour")
                             ([readTimeMSecs], [adaptedValue], pinColors[pin]);
 
-        receivedPlot.put(geomPoint(receivedAes));
-        adaptedPlot.put(geomPoint(adaptedAes));
+        receivedAIPlot.put(geomPoint(receivedAes));
+        adaptedAIPlot.put(geomPoint(adaptedAes));
     }
 
-    void addVarMonitorRead(T)(ubyte varIndex, T receivedValue, T adaptedValue, long mSecs)
+    void addVarMonitorRead(T : short)(ubyte varIndex, T receivedValue, T adaptedValue, long readTimeMSecs)
     {
+        enum pinColors = ["a", "b", "c", "d", "e", "f"];
 
+        auto receivedAes = Aes!(long[], "x", T[], "y", string, "colour")
+                            ([readTimeMSecs], [receivedValue], pinColors[varIndex]);
+
+        auto adaptedAes = Aes!(long[], "x", T[], "y", string, "colour")
+                            ([readTimeMSecs], [adaptedValue], pinColors[varIndex]);
+
+        receivedVarMonitorsPlot.put(geomPoint(receivedAes));
+        adaptedVarMonitorsPlot.put(geomPoint(adaptedAes));
     }
 }

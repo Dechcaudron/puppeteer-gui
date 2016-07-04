@@ -26,19 +26,20 @@ public shared class PuppeteerListener
 
     public void varListener(T)(ubyte varIndex, T realValue, T adaptedValue, long mSecs)
     {
-
+        drawer.send(DrawVarMonitorMessage!T(varIndex, realValue, adaptedValue, mSecs));
     }
 }
 
 void drawLoop()
 {
-    Plotter plotter = new Plotter();
+    Plotter plotter;
 
     bool shouldLoop = true;
     while(shouldLoop)
     {
         receive(
             (DrawAIMessage msg) {plotter.addAIRead(msg.pin, msg.realValue, msg.adaptedValue, msg.mSecs);},
+            (DrawVarMonitorMessage!short msg) {plotter.addVarMonitorRead(msg.varIndex, msg.realValue, msg.adaptedValue, msg.mSecs);},
             (int i) {if (i==0) shouldLoop = false;}
         );
     }
@@ -52,5 +53,13 @@ private struct DrawAIMessage
     ubyte pin;
     float realValue;
     float adaptedValue;
+    long mSecs;
+}
+
+private struct DrawVarMonitorMessage(T)
+{
+    ubyte varIndex;
+    T realValue;
+    T adaptedValue;
     long mSecs;
 }
